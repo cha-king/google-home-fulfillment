@@ -1,4 +1,3 @@
-const https = require('https');
 const express = require('express');
 
 const app = express();
@@ -29,5 +28,5 @@ app.post('/token', (req, res) => {
 
 
 app.listen(port, () => {
-    console.log(`Listening on part ${port}`);
+    console.log(`Listening on port ${port}`);
 });
