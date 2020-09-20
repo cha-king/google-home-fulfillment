@@ -1,12 +1,12 @@
 const devices = [
     {
-        id: 1,
+        id: '1',
         type: 'action.devices.types.LIGHT',
         traits: [
             'action.devices.traits.OnOff'
         ],
         name: {
-            name: 'Christmas lights'
+            name: 'Bedroom lights'
         },
         willReportState: false,
         roomHint: 'bedroom'
