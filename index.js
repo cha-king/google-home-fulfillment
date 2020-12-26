@@ -14,6 +14,14 @@ const app = express();
 const jsonParser = bodyParser.json();
 app.post('/fulfillment', jsonParser, googleApp);
 
+app.get('/health', (req, res) => {
+    const response = {
+        'status': 'healthy'
+    };
+
+    res.json(response);
+});
+
 app.get('/auth', (req, res) => {
     const redirect_uri = req.query.redirect_uri + `?code=${AUTH_CODE}&state=${req.query.state}`;
 
