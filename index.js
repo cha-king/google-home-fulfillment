@@ -10,9 +10,10 @@ const AUTH_CODE = 'AUTH'
 
 
 const app = express();
+const fulfillment = googleApp();
 
 const jsonParser = bodyParser.json();
-app.post('/fulfillment', jsonParser, googleApp);
+app.post('/fulfillment', jsonParser, fulfillment);
 
 app.get('/health', (req, res) => {
     const response = {
