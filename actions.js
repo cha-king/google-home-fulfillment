@@ -7,9 +7,9 @@ module.exports = createApplication;
 
 
 function createApplication() {
-    const app = smarthome()
+    const fulfillment = smarthome()
 
-    app.onSync((body, headers) => {
+    fulfillment.onSync((body, headers) => {
         return {
             requestId: body.requestId,
             payload: {
@@ -19,7 +19,7 @@ function createApplication() {
         }
     });
 
-    app.onQuery((body, headers) => {
+    fulfillment.onQuery((body, headers) => {
         return {
             requestId: body.requestId,
             payload: {
@@ -33,7 +33,7 @@ function createApplication() {
         }
     });
 
-    app.onExecute((body, headers) => {
+    fulfillment.onExecute((body, headers) => {
         const value = body.inputs[0].payload.commands[0].execution[0].params.on;
         
         light.setLight(value);
@@ -50,6 +50,8 @@ function createApplication() {
             }
         }
     });
+
+    const app = {fulfillment};
 
     return app;
 }
