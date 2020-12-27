@@ -40,8 +40,15 @@ app.post('/token', (req, res) => {
     res.json(response);
 });
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
     console.log(`Listening on port ${port}`);
 });
 
 
+process.on('SIGTERM', () => {
+    console.log('SIGTERM signal received: closing HTTP server');
+    server.close(() => {
+      console.log('HTTP server closed')
+    });
+    actions.close();
+  })

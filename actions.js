@@ -20,7 +20,10 @@ function createApplication() {
     const light = new Light(client);
 
     const fulfillment = createFulfillment(light);
-    const app = {fulfillment};
+    const app = {
+        fulfillment,
+        close: () => client.end()
+    };
 
     return app;
 }
