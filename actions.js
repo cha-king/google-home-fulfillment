@@ -1,12 +1,31 @@
 const {smarthome} = require('actions-on-google');
 const devices = require('./devices.js');
-const light = require('./light.js');
+const Light = require('./light.js');
+const mqtt = require('mqtt');
 
 
 module.exports = createApplication;
 
 
+const TOPIC = 'bedroom/lamp/setState';
+const UPDATE_TOPIC = 'bedroom/lamp/state';
+const BROKER_HOST = 'mqtt://broker';
+
+
 function createApplication() {
+    const client = mqtt.connect(BROKER_HOST);
+    client.on('connect', () => {
+        client.subscribe(UPDATE_TOPIC);
+    });
+    const light = new Light(client);
+
+    const fulfillment = createFulfillment(light);
+    const app = {fulfillment};
+
+    return app;
+}
+
+function createFulfillment(light) {
     const fulfillment = smarthome()
 
     fulfillment.onSync((body, headers) => {
@@ -26,7 +45,8 @@ function createApplication() {
                 devices: {
                     '1': {
                         online: true,
-                        status: 'SUCCESS'
+                        status: 'SUCCESS',
+                        on: light.state
                     }
                 }
             }
@@ -50,8 +70,5 @@ function createApplication() {
             }
         }
     });
-
-    const app = {fulfillment};
-
-    return app;
+    return fulfillment;
 }
