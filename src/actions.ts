@@ -19,9 +19,26 @@ app.onSync((body, headers) => {
     }
 })
 
-app.onQuery((body, headers) => {
+app.onQuery(async (body, headers) => {
     console.log("QUERY")
 
+    // TODO: Actually reference devices here
+    const id = body.inputs[0].payload.devices[0].id
+    if (id === '12345') {
+        const response = await axios.get('http://smart-lamp.local/lightState')
+        return {
+            requestId: body.requestId,
+            payload: {
+                devices: {
+                    '12345': {
+                        on: response.data,
+                        online: true,
+                    }
+                }
+            }
+        }
+    }
+    
     return {
         requestId: body.requestId,
         payload: {
