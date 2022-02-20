@@ -4,7 +4,7 @@ import axios from 'axios'
 import devices from './devices'
 
 
-const LIGHT_CONTROLLER_URL = 'http://smart-lamp.home.cha-king.com'
+const LIGHT_CONTROLLER_URL = 'http://smart-lamp.home.cha-king.com/lightState'
 
 
 const app = smarthome()
