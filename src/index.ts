@@ -18,6 +18,17 @@ app.post('/fulfillment', bodyParser.json(), actions)
 
 app.use('/oauth', oauth)
 
-app.listen(port, () => {
+const listener = app.listen(port, () => {
     console.log(`Listening on port ${port}..`)
 })
+
+
+
+const shutdown: NodeJS.SignalsListener = function(signal) {
+    console.log(`${signal} received. Exiting..`)
+    listener.close()
+    process.exit(0)
+}
+
+process.on('SIGINT', shutdown)
+process.on('SIGTERM', shutdown)
