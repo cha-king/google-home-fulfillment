@@ -4,6 +4,9 @@ import axios from 'axios'
 import devices from './devices'
 
 
+const LIGHT_CONTROLLER_URL = 'http://smart-lamp.home.cha-king.com'
+
+
 const app = smarthome()
 
 
@@ -25,7 +28,7 @@ app.onQuery(async (body, headers) => {
     // TODO: Actually reference devices here
     const id = body.inputs[0].payload.devices[0].id
     if (id === '12345') {
-        const response = await axios.get('http://smart-lamp.local/lightState')
+        const response = await axios.get(LIGHT_CONTROLLER_URL)
         return {
             requestId: body.requestId,
             payload: {
@@ -54,9 +57,9 @@ app.onExecute((body, headers) => {
     // TODO: Actually parse this sensibly
     const val = body.inputs[0].payload.commands[0].execution[0].params?.on
     if (val === true) {
-        axios.post('http://smart-lamp.local/lightState', 'true')
+        axios.post(LIGHT_CONTROLLER_URL, 'true')
     } else if (val === false) {
-        axios.post('http://smart-lamp.local/lightState', 'false')
+        axios.post(LIGHT_CONTROLLER_URL, 'false')
     }
 
     return {
