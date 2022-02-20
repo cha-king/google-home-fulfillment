@@ -11,3 +11,4 @@ Local webhook for integrating Google Home with home services/devices
 - Implement local fulfillment
 - Handle report state
     - Probably stupid if the light doesn't have another means to set it
+- Maybe some sort of service discovery, since .local doesn't work nicely with docker
