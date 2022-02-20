@@ -33,6 +33,7 @@ app.onQuery(async (body, headers) => {
                     '12345': {
                         on: response.data,
                         online: true,
+                        status: 'SUCCESS',
                     }
                 }
             }
