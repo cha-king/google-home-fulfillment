@@ -1,8 +1,27 @@
 import express from 'express'
+import safeCompare from 'tsscmp'
 
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET
+const PROJECT_ID = process.env.PROJECT_ID
+
+const REDIRECT_URIS = [
+    `https://oauth-redirect.googleusercontent.com/r/${PROJECT_ID}`,
+    `https://oauth-redirect-sandbox.googleusercontent.com/r/${PROJECT_ID}`,
+]
+
+if (!GOOGLE_CLIENT_ID) {
+    throw new Error("GOOGLE_CLIENT_ID is required")
+}
+
+if (!GOOGLE_CLIENT_SECRET) {
+    throw new Error("GOOGLE_CLIENT_SECRET is required")
+}
+
+if (!PROJECT_ID) {
+    throw new Error("PROJECT_ID is required")
+}
 
 /*
 There are some quirks to how we use OAuth here. The main takeaway is
@@ -25,9 +44,31 @@ router.get('/auth', (req, res) => {
     // Stubbing out auth for now
     // TODO: Validate credentials and generate authorization code
     // TODO: Verify google client id / secret
+    const clientId = req.query['client_id']
     const redirectUri = req.query['redirect_uri']
     const state = req.query['state']
 
+    if (typeof clientId !== "string") {
+        res.status(400).send("Invalid client ID")
+        return
+    }
+
+    if (!safeCompare(clientId, GOOGLE_CLIENT_ID)) {
+        res.status(401).send("Unauthorized")
+        return
+    }
+
+    if (typeof redirectUri !== 'string') {
+        res.status(400).send("Invalid redirect uri")
+        return
+    }
+
+    if (!REDIRECT_URIS.some(element => safeCompare(element, redirectUri))) {
+        res.status(401).send("Unauthorized")
+        return
+    }
+
+    // We don't really use this, so just stub it out
     const fakeAuthCode = "123456"
 
     const url  = `${redirectUri}?code=${fakeAuthCode}&state=${state}`
