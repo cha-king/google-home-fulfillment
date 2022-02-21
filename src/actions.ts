@@ -51,21 +51,30 @@ app.onQuery(async (body, headers) => {
     }
 })
 
-app.onExecute((body, headers) => {
+app.onExecute(async (body, headers) => {
     console.log("EXECUTE")
 
     // TODO: Actually parse this sensibly
     const val = body.inputs[0].payload.commands[0].execution[0].params?.on
     if (val === true) {
-        axios.post(LIGHT_CONTROLLER_URL, 'true')
+        await axios.post(LIGHT_CONTROLLER_URL, 'true')
     } else if (val === false) {
-        axios.post(LIGHT_CONTROLLER_URL, 'false')
+        await axios.post(LIGHT_CONTROLLER_URL, 'false')
     }
 
     return {
         requestId: body.requestId,
         payload: {
-            commands: []
+            commands: [
+                {
+                    ids: ['12345'],
+                    status: 'SUCCESS',
+                    states: {
+                        online: true,
+                        on: val,
+                    }
+                }
+            ]
         }
     }
 })
