@@ -6,7 +6,7 @@ const devices: SmartHomeV1SyncDevices[] = [
         id: '12345',
         type: 'action.devices.types.LIGHT',
         name: {
-            name: 'Test Light',
+            name: 'Bedroom Lights',
             defaultNames: [],
             nicknames: [],
         },
