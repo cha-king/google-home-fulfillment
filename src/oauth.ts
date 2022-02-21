@@ -76,6 +76,17 @@ router.get('/auth', (req, res) => {
 })
 
 router.post('/token', (req, res) => {
+    const clientId = req.query['client_id']
+    const clientSecret = req.query['client_secret']
+    if (typeof clientId !== 'string' || typeof clientSecret !== 'string') {
+        res.status(400).send("Client ID and secret required")
+        return
+    }
+    if (!safeCompare(clientId, GOOGLE_CLIENT_ID) || !safeCompare(clientSecret, GOOGLE_CLIENT_SECRET)) {
+        res.status(401).send("Unauthorized")
+        return
+    }
+
     res.send(JSON.stringify({
         'token_type': 'Bearer',
         'access_token': 'hehehehehehehe',
