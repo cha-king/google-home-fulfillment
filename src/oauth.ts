@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { RequestHandler } from 'express'
 import safeCompare from 'tsscmp'
 import jwt from 'jsonwebtoken'
 
@@ -105,5 +105,28 @@ router.post('/token', (req, res) => {
 })
 
 
+const validateToken: RequestHandler = function(req, res, next) {
+    const auth = req.headers.authorization
+    if (!auth) {
+        res.status(401).send("Unauthorized")
+        return
+    }
 
-export default router
+    const [type, token] = auth.split(' ')
+    if (type !== 'Bearer') {
+        res.status(401).send("Unauthorized")
+        return
+    }
+
+    try {
+        jwt.verify(token, TOKEN_SECRET)
+    } catch(err) {
+        console.error("Error validating token: ", err)
+        res.status(401).send("Unauthorized")
+        return
+    }
+    next()
+}
+
+
+export { router, validateToken }
