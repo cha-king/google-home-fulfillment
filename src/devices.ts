@@ -1,19 +1,28 @@
 import { SmartHomeV1SyncDevices } from "actions-on-google"
 
 
-const devices: SmartHomeV1SyncDevices[] = [
+interface Device {
+    hostname: string
+    metadata: SmartHomeV1SyncDevices
+}
+
+
+const devices: Device[] = [
     {
-        id: '12345',
-        type: 'action.devices.types.LIGHT',
-        name: {
-            name: 'Bedroom Lights',
-            defaultNames: [],
-            nicknames: [],
-        },
-        traits: [
-            'action.devices.traits.OnOff'
-        ],
-        willReportState: false,
+        hostname: 'smart-home.home.cha-king.com',
+        metadata: {
+            id: '12345',
+            type: 'action.devices.types.LIGHT',
+            name: {
+                name: 'Bedroom Lights',
+                defaultNames: [],
+                nicknames: [],
+            },
+            traits: [
+                'action.devices.traits.OnOff'
+            ],
+            willReportState: false,
+        }
     }
 ]
 

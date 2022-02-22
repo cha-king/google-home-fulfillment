@@ -17,7 +17,7 @@ app.onSync((body, headers) => {
         requestId: body.requestId,
         payload: {
             agentUserId: "FAKE USER ID",
-            devices: devices,
+            devices: devices.map(device => device.metadata),
         }
     }
 })
