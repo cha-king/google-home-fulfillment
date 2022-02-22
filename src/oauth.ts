@@ -1,6 +1,7 @@
 import express, { RequestHandler } from 'express'
 import safeCompare from 'tsscmp'
 import jwt from 'jsonwebtoken'
+import bodyParser from 'body-parser'
 
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID
@@ -83,9 +84,9 @@ router.get('/auth', (req, res) => {
     res.redirect(url)
 })
 
-router.post('/token', (req, res) => {
-    const clientId = req.query['client_id']
-    const clientSecret = req.query['client_secret']
+router.post('/token', bodyParser.urlencoded({ extended: true }), (req, res) => {
+    const clientId = req.body['client_id']
+    const clientSecret = req.body['client_secret']
     if (typeof clientId !== 'string' || typeof clientSecret !== 'string') {
         res.status(400).send("Client ID and secret required")
         return
