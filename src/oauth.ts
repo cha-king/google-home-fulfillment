@@ -1,10 +1,14 @@
 import express from 'express'
 import safeCompare from 'tsscmp'
+import jwt from 'jsonwebtoken'
 
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET
 const PROJECT_ID = process.env.PROJECT_ID
+const TOKEN_SECRET = process.env.TOKEN_SECRET
+
+const TOKEN_EXPIRATION_SECONDS = 86400
 
 const REDIRECT_URIS = [
     `https://oauth-redirect.googleusercontent.com/r/${PROJECT_ID}`,
@@ -21,6 +25,10 @@ if (!GOOGLE_CLIENT_SECRET) {
 
 if (!PROJECT_ID) {
     throw new Error("PROJECT_ID is required")
+}
+
+if (!TOKEN_SECRET) {
+    throw new Error("TOKEN_SECRET is required")
 }
 
 /*
@@ -87,10 +95,12 @@ router.post('/token', (req, res) => {
         return
     }
 
+    const token = jwt.sign({}, TOKEN_SECRET, {expiresIn: TOKEN_EXPIRATION_SECONDS})
+
     res.send(JSON.stringify({
         'token_type': 'Bearer',
-        'access_token': 'hehehehehehehe',
-        'expires_in': 86400,
+        'access_token': token,
+        'expires_in': TOKEN_EXPIRATION_SECONDS,
     }))
 })
 
