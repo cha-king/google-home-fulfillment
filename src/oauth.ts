@@ -96,13 +96,16 @@ router.post('/token', bodyParser.urlencoded({ extended: true }), (req, res) => {
         return
     }
 
-    const token = jwt.sign({}, TOKEN_SECRET, {expiresIn: TOKEN_EXPIRATION_SECONDS})
-
-    res.send(JSON.stringify({
-        'token_type': 'Bearer',
-        'access_token': token,
-        'expires_in': TOKEN_EXPIRATION_SECONDS,
-    }))
+    jwt.sign({}, TOKEN_SECRET, {expiresIn: TOKEN_EXPIRATION_SECONDS}, (err, token) => {
+        if (err) {
+            throw err
+        }
+        res.send(JSON.stringify({
+            'token_type': 'Bearer',
+            'access_token': token,
+            'expires_in': TOKEN_EXPIRATION_SECONDS,
+        }))
+    })
 })
 
 
@@ -119,14 +122,14 @@ const validateToken: RequestHandler = function(req, res, next) {
         return
     }
 
-    try {
-        jwt.verify(token, TOKEN_SECRET)
-    } catch(err) {
-        console.error("Error validating token: ", err)
-        res.status(401).send("Unauthorized")
-        return
-    }
-    next()
+    jwt.verify(token, TOKEN_SECRET, (err) => {
+        if (err) {
+            console.error("Error validating token: ", err)
+            res.status(401).send("Unauthorized")
+        } else {
+            next()
+        }
+    })
 }
 
 
