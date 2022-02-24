@@ -100,11 +100,18 @@ router.post('/token', bodyParser.urlencoded({ extended: true }), (req, res) => {
         if (err) {
             throw err
         }
-        res.send(JSON.stringify({
+
+        const response: Record<string, any> = {
             'token_type': 'Bearer',
             'access_token': token,
             'expires_in': TOKEN_EXPIRATION_SECONDS,
-        }))
+        }
+
+        if (req.body['grant_type'] === 'refresh_token') {
+            response['refresh_token'] = '123456'
+        }
+
+        res.send(JSON.stringify(response))
     })
 })
 
