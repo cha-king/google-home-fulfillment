@@ -107,7 +107,7 @@ router.post('/token', bodyParser.urlencoded({ extended: true }), (req, res) => {
             'expires_in': TOKEN_EXPIRATION_SECONDS,
         }
 
-        if (req.body['grant_type'] === 'refresh_token') {
+        if (req.body['grant_type'] === 'authorization_code') {
             response['refresh_token'] = '123456'
         }
 
