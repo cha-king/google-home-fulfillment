@@ -45,6 +45,13 @@ What this means for us is:
       but we can just assume client id / secret is enough to give this out
 */
 
+interface TokenResponse {
+    token_type: 'Bearer'
+    access_token: string
+    refresh_token?: string
+    expires_in: number
+}
+
 
 const router = express.Router()
 
@@ -101,7 +108,11 @@ router.post('/token', bodyParser.urlencoded({ extended: true }), (req, res) => {
             throw err
         }
 
-        const response: Record<string, any> = {
+        if (!token) {
+            return
+        }
+
+        const response: TokenResponse = {
             'token_type': 'Bearer',
             'access_token': token,
             'expires_in': TOKEN_EXPIRATION_SECONDS,
