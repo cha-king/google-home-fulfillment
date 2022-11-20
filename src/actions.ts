@@ -1,4 +1,5 @@
-import { smarthome } from 'actions-on-google'
+import { smarthome, SmartHomeV1QueryPayload } from 'actions-on-google'
+import { ApiClientObjectMap } from 'actions-on-google/dist/common'
 import axios from 'axios'
 
 import devices from './devices'
@@ -17,7 +18,7 @@ app.onSync((body, headers) => {
         requestId: body.requestId,
         payload: {
             agentUserId: "FAKE USER ID",
-            devices: devices.map(device => device.metadata),
+            devices: Array.from(devices.values()).map(device => device.metadata),
         }
     }
 })
@@ -25,28 +26,47 @@ app.onSync((body, headers) => {
 app.onQuery(async (body, headers) => {
     console.log("QUERY")
 
-    // TODO: Actually reference devices here
-    const id = body.inputs[0].payload.devices[0].id
-    if (id === '12345') {
-        const response = await axios.get(LIGHT_CONTROLLER_URL)
-        return {
-            requestId: body.requestId,
-            payload: {
-                devices: {
-                    '12345': {
-                        on: response.data,
-                        online: true,
-                        status: 'SUCCESS',
-                    }
+    let output: ApiClientObjectMap<any> = {}
+
+    for (const input of body.inputs) {
+        await Promise.all(input.payload.devices.map(async deviceRequest => {
+            const deviceId = deviceRequest.id
+            const device = devices.get(deviceId)
+            if (!device) {
+                console.error(`No device present with ID: ${deviceId}`)
+                output[deviceId] = {
+                    on: false,
+                    online: false,
+                    status: 'ERROR',
                 }
+                return
             }
-        }
+ 
+            let response
+            try {
+                response = await axios.get(device.hostname)
+            } catch (error) {
+                console.error(error)
+                output[deviceId] = {
+                    on: false,
+                    online: false,
+                    status: 'OFFLINE',
+                }
+                return
+            }
+
+            output[deviceId] = {
+                on: response.data,
+                online: true,
+                status: 'SUCCESS'
+            }
+        }))
     }
-    
+
     return {
         requestId: body.requestId,
         payload: {
-            devices: []
+            devices: output
         }
     }
 })

@@ -1,14 +1,7 @@
-import { SmartHomeV1SyncDevices } from "actions-on-google"
-
-
-interface Device {
-    hostname: string
-    metadata: SmartHomeV1SyncDevices
-}
-
-
-const devices = new Map<string, Device>([
-    ['12345', {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const devices = [
+    {
         hostname: 'smart-home.home.cha-king.com',
         metadata: {
             id: '12345',
@@ -23,8 +16,6 @@ const devices = new Map<string, Device>([
             ],
             willReportState: false,
         }
-    }]
-])
-
-
-export default devices
+    }
+];
+exports.default = devices;
